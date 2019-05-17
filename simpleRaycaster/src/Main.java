@@ -63,6 +63,8 @@ public class Main extends JFrame implements Runnable {
         setBackground(Color.MAGENTA);
         setLocationRelativeTo(null);
         setVisible(true);
+        public Camara camara;
+        camara = new Camara(4.5,4.5,1,0,0,-0.66);
         start();
     }
     
