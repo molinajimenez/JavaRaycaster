@@ -64,6 +64,45 @@ public class Camara implements KeyListener {
             atras = false;
         }
     }
+    /**
+     * funcionalidad de transform tipo Unity..
+     * @param map 
+     */
+    public void update(int[][] map){
+        if(adelante){
+            //chequeamos si no estamos en pared..
+            if(map[(int)(xPos + xAxis * VELOCIDAD)][(int) yPos]==0);
+                xPos += xAxis * VELOCIDAD;
+        }
+        if(map[(int)xPos][(int)(yPos + yAxis * VELOCIDAD)] ==0){
+			yPos+=yAxis*VELOCIDAD;
+	}
+        if(atras){
+            if(map[(int)(xPos - xAxis * VELOCIDAD)][(int) yPos]==0);
+                xPos -= xAxis * VELOCIDAD;
+        }
+        /**
+         * Valores de rotacion, inspirados en matriz de rotacion..
+         */
+        if(derecha){
+            double old_x_Axis = xAxis;
+            xAxis = xAxis*Math.cos(-ROTACION) - yAxis*Math.sin(-ROTACION);
+            yAxis = yAxis*Math.sin(-ROTACION) + yAxis*Math.cos(-ROTACION);
+            double old_x_Plano = xPlano;
+            xPlano = xPlano*Math.cos(-ROTACION) - yPlano*Math.sin(-ROTACION);
+            yPlano = yPlano*Math.sin(-ROTACION) + yPlano*Math.cos(-ROTACION);
+            
+        }
+        if(izq){
+            double old_x_Axis = xAxis;
+            xAxis = xAxis*Math.cos(ROTACION) - yAxis*Math.sin(ROTACION);
+            yAxis = yAxis*Math.sin(ROTACION) + yAxis*Math.cos(ROTACION);
+            double old_x_Plano = xPlano;
+            xPlano = xPlano*Math.cos(ROTACION) - yPlano*Math.sin(ROTACION);
+            yPlano = yPlano*Math.sin(ROTACION) + yPlano*Math.cos(ROTACION);
+        }
+    }
+    
     
     
 }

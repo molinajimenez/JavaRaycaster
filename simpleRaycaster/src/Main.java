@@ -32,7 +32,6 @@ public class Main extends JFrame implements Runnable {
     public int[] pixeles;
     
     public Camara camara;
-    camara = new Camara(4.5,4.5,1,0,0,-0.66);
     public static int[][] mapa=
         {
             {1,1,1,1,1,1,1,1,2,2,2,2,2,2,2},
@@ -65,6 +64,8 @@ public class Main extends JFrame implements Runnable {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBackground(Color.MAGENTA);
         setLocationRelativeTo(null);
+        
+        camara = new Camara(4.5,4.5,1,0,0,-0.66);
         setVisible(true);
         
         start();
@@ -111,6 +112,8 @@ public class Main extends JFrame implements Runnable {
             delta = delta + ((ahora-ultimoRefresh)) / refreshRate;
             ultimoRefresh = ahora;
             while (delta >= 1){ // no hacemos nada mas que esperar..
+                
+                camara.update(mapa);
                 //mas optimizado..
                 --delta;
             }
