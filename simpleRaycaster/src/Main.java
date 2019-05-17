@@ -30,8 +30,9 @@ public class Main extends JFrame implements Runnable {
     private boolean jugando;
     private BufferedImage imagen;
     public int[] pixeles;
-    
+    public ArrayList<TextureManager> texturas;
     public Camara camara;
+    public RendererManager rm;
     public static int[][] mapa=
         {
             {1,1,1,1,1,1,1,1,2,2,2,2,2,2,2},
@@ -65,7 +66,12 @@ public class Main extends JFrame implements Runnable {
         setBackground(Color.MAGENTA);
         setLocationRelativeTo(null);
         
+        //texturas..
+        texturas = new ArrayList<>();
+        
+        
         camara = new Camara(4.5,4.5,1,0,0,-0.66);
+        rm = new RendererManager(mapa, anchoMapa, altoMapa,texturas,640, 480);
         setVisible(true);
         
         start();
@@ -112,7 +118,7 @@ public class Main extends JFrame implements Runnable {
             delta = delta + ((ahora-ultimoRefresh)) / refreshRate;
             ultimoRefresh = ahora;
             while (delta >= 1){ // no hacemos nada mas que esperar..
-                
+                rm.update(camara, pixeles);
                 camara.update(mapa);
                 //mas optimizado..
                 --delta;
@@ -124,6 +130,7 @@ public class Main extends JFrame implements Runnable {
     
     public static void main(String [] args){
         Main main = new Main();
+        
     }
     
 }

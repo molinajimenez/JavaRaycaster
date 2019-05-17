@@ -37,7 +37,9 @@ public class TextureManager {
     */
     private void load(){
         try{
-            BufferedImage textura = ImageIO.read(new File(path));
+            
+            //Clase ImageIO fue actualizada, ahora se accesa asi, segun: https://stackoverflow.com/questions/9864267/loading-image-resource/9866659#9866659
+            BufferedImage textura = ImageIO.read(getClass().getResource(path));
             int ancho = textura.getWidth();
             int alto = textura.getHeight();
         } catch(IOException e){
@@ -49,6 +51,9 @@ public class TextureManager {
     /**
      * Aqui se declaran las texturas a utilizar, tienen que ser PUBLIC.
      */
+    
+    public static TextureManager ladrillo = new TextureManager("assets/bricksx64.png", 64);
+
     
     
     

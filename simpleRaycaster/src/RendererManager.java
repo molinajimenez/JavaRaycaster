@@ -20,9 +20,11 @@ public class RendererManager {
     public int AnchoMapa, AltoMapa, ancho, alto;
     public ArrayList<TextureManager> texturas;
     
-    public RendererManager(int[][] mapa, ArrayList textura, int ancho, int alto){
+    public RendererManager(int[][] mapa, int mapaAncho, int mapaAlto, ArrayList<TextureManager> textura, int ancho, int alto){
         this.mapa = mapa;
         this.texturas = textura;
+        this.AnchoMapa = mapaAncho;
+        this.AltoMapa = mapaAlto;
         this.ancho = ancho;
         this.alto = alto;
     }
@@ -133,11 +135,11 @@ public class RendererManager {
             int texturaX = (int)(paredHitX * (texturas.get(textId).SIZE));
             
             if (lado == 0 && raycastDir_X > 0){
-                texturaX = texturas.get(textId).SIZE - texturaX - 1;
+                texturaX = texturas.get(0).SIZE - texturaX - 1;
             }
             
             if (lado == 1 && raycastDir_Y < 0){
-                texturaX = texturas.get(textId).SIZE - texturaX - 1;
+                texturaX = texturas.get(0).SIZE - texturaX - 1;
             }
             
             for (int y=start; y<end; ++y){
@@ -146,9 +148,14 @@ public class RendererManager {
                 int color;
                 
                 if (lado == 0){
-                    color = texturas.get(textId).pixels[texturaX + (texturaY * texturas.get(textId).SIZE)];
+                    color = texturas.get(0).pixels[texturaX + (texturaY * texturas.get(0).SIZE)];
+                } else{
+                    //autor dice que esto es sombreado, ni idea..
+                    color = (texturas.get(0).pixels[texturaX + (texturaY * texturas.get(0).SIZE)]>>1) & 8355711;
                 }
+                pixeles[x + y *(ancho)] = color;
             }
         }
+        return pixeles;
     }
 }
