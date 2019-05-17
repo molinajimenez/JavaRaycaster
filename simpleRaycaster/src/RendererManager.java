@@ -18,7 +18,7 @@ import java.awt.Color;
 public class RendererManager {
     public int[][] mapa;
     public int AnchoMapa, AltoMapa, ancho, alto;
-    public ArrayList texturas;
+    public ArrayList<TextureManager> texturas;
     
     public RendererManager(int[][] mapa, ArrayList textura, int ancho, int alto){
         this.mapa = mapa;
@@ -119,6 +119,36 @@ public class RendererManager {
                 end = alto -1;
             }
             
+            int textId = mapa[mapX][mapY] - 1;
+            double paredHitX;
+    
+            if (lado==1){
+                paredHitX = (camara.xPos + ((mapY - camara.yPos + (1 - pasoY) / 2 ) / raycastDir_Y) * raycastDir_X);
+            } else{
+                paredHitX = (camara.yPos + ((mapX - camara.xPos + (1 - pasoX) / 2 ) / raycastDir_X) * raycastDir_Y);
+                
+            }
+            paredHitX -= Math.floor(paredHitX);
+            //coordenadas de textura..
+            int texturaX = (int)(paredHitX * (texturas.get(textId).SIZE));
+            
+            if (lado == 0 && raycastDir_X > 0){
+                texturaX = texturas.get(textId).SIZE - texturaX - 1;
+            }
+            
+            if (lado == 1 && raycastDir_Y < 0){
+                texturaX = texturas.get(textId).SIZE - texturaX - 1;
+            }
+            
+            for (int y=start; y<end; ++y){
+                //shift binario.. 
+                int texturaY = (((y*2 - alto + alturaP)<<6)/alturaP)/2;
+                int color;
+                
+                if (lado == 0){
+                    color = texturas.get(textId).pixels[texturaX + (texturaY * texturas.get(textId).SIZE)];
+                }
+            }
         }
     }
 }
