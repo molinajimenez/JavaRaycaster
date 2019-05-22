@@ -72,5 +72,8 @@ public class TextureManager {
     
     //enemy
     public static TextureManager emperor = new TextureManager("assets/emperor.png",64);
+    public static TextureManager vader = new TextureManager("assets/vader.png",64);
     
+    public static TextureManager revan = new TextureManager("assets/revan.png",64);
+    public static TextureManager logo = new TextureManager("assets/sw.png",64);
 }
