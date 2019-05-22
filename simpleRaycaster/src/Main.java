@@ -37,19 +37,19 @@ public class Main extends JFrame implements Runnable {
         {
             {1,1,1,1,1,1,1,1,2,2,2,2,2,2,2},
             {1,0,0,0,0,0,0,0,2,0,0,0,0,0,2},
-            {1,0,3,3,3,3,3,0,0,0,0,0,0,0,2},
+            {1,0,1,2,1,2,1,0,0,0,0,0,0,0,2},
             {1,0,3,0,0,0,3,0,2,0,0,0,0,0,2},
-            {1,0,3,0,0,0,3,0,2,2,2,0,2,2,2},
-            {1,0,3,0,0,0,3,0,2,0,0,0,0,0,2},
-            {1,0,3,3,0,3,3,0,2,0,0,0,0,0,2},
-            {1,0,0,0,0,0,0,0,2,0,0,0,0,0,2},
-            {1,1,1,1,1,1,1,1,4,4,4,0,4,4,4},
-            {1,0,0,0,0,0,1,4,0,0,0,0,0,0,4},
-            {1,0,0,0,0,0,1,4,0,0,0,0,0,0,4},
-            {1,0,0,2,0,0,1,4,0,3,3,3,3,0,4},
-            {1,0,0,0,0,0,1,4,0,3,3,3,3,0,4},
-            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
-            {1,1,1,1,1,1,1,4,4,4,4,4,4,4,4}
+            {1,0,1,0,0,0,1,0,2,2,2,0,2,2,2},
+            {1,0,1,0,0,0,1,0,4,0,0,0,0,0,4},
+            {1,0,1,2,0,2,1,0,5,0,0,0,0,0,5},
+            {1,0,0,0,0,0,0,0,4,0,0,0,0,0,4},
+            {1,1,1,1,1,1,1,1,6,6,6,0,6,6,6},
+            {1,0,0,0,0,0,1,7,0,0,0,0,0,0,7},
+            {1,0,0,0,0,0,1,8,0,0,0,0,0,0,8},
+            {1,0,0,12,0,0,1,7,0,11,10,9,0,0,7},
+            {1,0,0,0,0,0,1,8,0,9,10,11,0,0,8},
+            {1,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
+            {1,1,1,1,1,1,1,7,8,7,8,7,8,7,8}
 	};
     
     public Main(){
@@ -58,20 +58,33 @@ public class Main extends JFrame implements Runnable {
         thread = new Thread(this);
         imagen = new BufferedImage(640,480, BufferedImage.TYPE_INT_RGB);
         pixeles = ((DataBufferInt)imagen.getRaster().getDataBuffer()).getData();
+        //texturas..
+        texturas = new ArrayList<>();
+        texturas.add(TextureManager.wall1);
+        texturas.add(TextureManager.wall2);
+        texturas.add(TextureManager.wallDoor);
+        
+        texturas.add(TextureManager.wall1Sith);
+        texturas.add(TextureManager.wallSith2);
+        texturas.add(TextureManager.imperial);
+        texturas.add(TextureManager.imperial2);
+        texturas.add(TextureManager.imperial3);
+        
+        texturas.add(TextureManager.action);
+        texturas.add(TextureManager.action2);
+        texturas.add(TextureManager.action3);
+        
+        texturas.add(TextureManager.emperor);
+        camara = new Camara(4.5,4.5,1,0,0,-0.66);
+        rm = new RendererManager(mapa, anchoMapa, altoMapa,texturas,640, 480);
         //Resolucion chafa para mas performance..
+        addKeyListener(camara);
         setSize(640,480);
         setResizable(false);
         setTitle("Proyecto - Graficas");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBackground(Color.MAGENTA);
+        setBackground(Color.BLACK);
         setLocationRelativeTo(null);
-        
-        //texturas..
-        texturas = new ArrayList<>();
-        
-        
-        camara = new Camara(4.5,4.5,1,0,0,-0.66);
-        rm = new RendererManager(mapa, anchoMapa, altoMapa,texturas,640, 480);
         setVisible(true);
         
         start();
@@ -118,6 +131,7 @@ public class Main extends JFrame implements Runnable {
             delta = delta + ((ahora-ultimoRefresh)) / refreshRate;
             ultimoRefresh = ahora;
             while (delta >= 1){ // no hacemos nada mas que esperar..
+       
                 rm.update(camara, pixeles);
                 camara.update(mapa);
                 //mas optimizado..

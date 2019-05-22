@@ -13,22 +13,21 @@
  */
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class TextureManager {
     public int[] pixels;
-    private String path;
+    private final String path;
     public final int SIZE;
     
     
     //constructor..
-    public TextureManager(String path, int size){
-        this.path = path;
-        this.SIZE = size;
+    public TextureManager(String pathParam, int size){
+        path = pathParam;
+        SIZE = size;
         //asumiendo textura completamente cuadrada..
-        this.pixels = new int[this.SIZE * this.SIZE];
+        pixels = new int[SIZE * SIZE];
         
         load();
     }
@@ -42,6 +41,7 @@ public class TextureManager {
             BufferedImage textura = ImageIO.read(getClass().getResource(path));
             int ancho = textura.getWidth();
             int alto = textura.getHeight();
+            textura.getRGB(0, 0, ancho, alto, pixels, 0, ancho);
         } catch(IOException e){
             System.out.println("Error: El path proveido no es una imagen o no existe.");
             e.printStackTrace();
@@ -52,10 +52,25 @@ public class TextureManager {
      * Aqui se declaran las texturas a utilizar, tienen que ser PUBLIC.
      */
     
-    public static TextureManager ladrillo = new TextureManager("assets/bricksx64.png", 64);
+    public static TextureManager wall1 = new TextureManager("assets/wall1A.png", 64);
+    public static TextureManager wall2 = new TextureManager("assets/wall2A.png",64);
+    public static TextureManager wall3 = new TextureManager("assets/wall3A.png",64);
+    public static TextureManager wallDoor = new TextureManager("assets/wallDoor.png",64);
+    public static TextureManager imperial = new TextureManager("assets/imperial.png",64);
+    public static TextureManager imperial2 = new TextureManager("assets/imperial2.png",64);
+    public static TextureManager imperial3 = new TextureManager("assets/imperial3.png",64);
+    
+    public static TextureManager wall1Sith = new TextureManager("assets/wall1Sith.png",64);
+    public static TextureManager wallSith2 = new TextureManager("assets/wall2Sith.png",64);
+    public static TextureManager action = new TextureManager("assets/action1.png",64);
+    public static TextureManager action2 = new TextureManager("assets/action2.png",64);
+    public static TextureManager action3 = new TextureManager("assets/action3.png",64);
+
 
     
+
     
-    
+    //enemy
+    public static TextureManager emperor = new TextureManager("assets/emperor.png",64);
     
 }

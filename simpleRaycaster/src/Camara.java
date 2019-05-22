@@ -20,12 +20,12 @@ public class Camara implements KeyListener {
     public final double ROTACION = .045;
     
     public Camara(double x, double y, double xDir, double yDir, double xP, double yP ){
-        this.xPos = x;
-        this.yPos = y;
-        this.xAxis = xDir;
-        this.yAxis = yDir;
-        this.xPlano = xP;
-        this.yPlano = yP;
+        xPos = x;
+        yPos = y;
+        xAxis = xDir;
+        yAxis = yDir;
+        xPlano = xP;
+        yPlano = yP;
     }
 
     @Override
@@ -73,13 +73,20 @@ public class Camara implements KeyListener {
             //chequeamos si no estamos en pared..
             if(map[(int)(xPos + xAxis * VELOCIDAD)][(int) yPos]==0);
                 xPos += xAxis * VELOCIDAD;
+     
+            if(map[(int)xPos][(int)(yPos + yAxis * VELOCIDAD)] ==0){
+                yPos+=yAxis*VELOCIDAD;
+            }
         }
-        if(map[(int)xPos][(int)(yPos + yAxis * VELOCIDAD)] ==0){
-			yPos+=yAxis*VELOCIDAD;
-	}
         if(atras){
-            if(map[(int)(xPos - xAxis * VELOCIDAD)][(int) yPos]==0);
+            if(map[(int)(xPos - xAxis * VELOCIDAD)][(int) yPos]==0){
                 xPos -= xAxis * VELOCIDAD;
+            }
+            
+            if(map[(int)(xPos + xAxis * VELOCIDAD)][(int) yPos]==0){
+                xPos -= xAxis * VELOCIDAD;
+            }
+                
         }
         /**
          * Valores de rotacion, inspirados en matriz de rotacion..
@@ -87,19 +94,19 @@ public class Camara implements KeyListener {
         if(derecha){
             double old_x_Axis = xAxis;
             xAxis = xAxis*Math.cos(-ROTACION) - yAxis*Math.sin(-ROTACION);
-            yAxis = yAxis*Math.sin(-ROTACION) + yAxis*Math.cos(-ROTACION);
+            yAxis = old_x_Axis*Math.sin(-ROTACION) + yAxis*Math.cos(-ROTACION);
             double old_x_Plano = xPlano;
             xPlano = xPlano*Math.cos(-ROTACION) - yPlano*Math.sin(-ROTACION);
-            yPlano = yPlano*Math.sin(-ROTACION) + yPlano*Math.cos(-ROTACION);
+            yPlano = old_x_Plano*Math.sin(-ROTACION) + yPlano*Math.cos(-ROTACION);
             
         }
         if(izq){
             double old_x_Axis = xAxis;
             xAxis = xAxis*Math.cos(ROTACION) - yAxis*Math.sin(ROTACION);
-            yAxis = yAxis*Math.sin(ROTACION) + yAxis*Math.cos(ROTACION);
+            yAxis = old_x_Axis*Math.sin(ROTACION) + yAxis*Math.cos(ROTACION);
             double old_x_Plano = xPlano;
             xPlano = xPlano*Math.cos(ROTACION) - yPlano*Math.sin(ROTACION);
-            yPlano = yPlano*Math.sin(ROTACION) + yPlano*Math.cos(ROTACION);
+            yPlano = old_x_Plano*Math.sin(ROTACION) + yPlano*Math.cos(ROTACION);
         }
     }
     

@@ -16,146 +16,124 @@ import java.util.ArrayList;
 import java.awt.Color;
 
 public class RendererManager {
-    public int[][] mapa;
-    public int AnchoMapa, AltoMapa, ancho, alto;
-    public ArrayList<TextureManager> texturas;
-    
-    public RendererManager(int[][] mapa, int mapaAncho, int mapaAlto, ArrayList<TextureManager> textura, int ancho, int alto){
-        this.mapa = mapa;
-        this.texturas = textura;
-        this.AnchoMapa = mapaAncho;
-        this.AltoMapa = mapaAlto;
-        this.ancho = ancho;
-        this.alto = alto;
-    }
-    public int[] update(Camara camara, int[] pixeles){
-        for(int n=0; n<pixeles.length/2; n++){
-            if(pixeles[n] != Color.DARK_GRAY.getRGB()){
-                pixeles[n] = Color.DARK_GRAY.getRGB();
-            }
-            for(int i = pixeles.length/2; i<pixeles.length; i++){
-                if(pixeles[i] != Color.gray.getRGB()){
-                    pixeles[i] = Color.gray.getRGB();
-                }
-            }
-        }
-        
-        for(int x=0; x<ancho; ++x){
-            double camaraX = 2 * x / (double)(ancho) - 1;
-            double raycastDir_X = camara.xAxis + camara.xPlano * camaraX;
-            double raycastDir_Y = camara.yAxis + camara.yPlano * camaraX;
-            
-            //Donde estamos parados..
-            int mapX = (int)camara.xPos;
-            int mapY = (int)camara.yPos;
-            
-            /**
-             * Obtenemos magnitud del vector de raycast
-             * distancia hacia los lados..
-             */
-            double distX;
-            double distY;
-            double deltaX = Math.sqrt(1 + (raycastDir_Y*raycastDir_Y)/ (raycastDir_X*raycastDir_X));
-            double deltaY = Math.sqrt(1 + (raycastDir_X*raycastDir_X)/ (raycastDir_Y*raycastDir_Y));
-            double lengthWall;
-            
-            int pasoX, pasoY;
-            //colisionador
-            boolean golpe = false;
-            int lado = 0; 
-            
-            if(raycastDir_X<0){
-                pasoX= -1;
-                distX = (camara.xPos - mapX)*deltaX;
-            } else{
-                pasoX = 1;
-                distX = (mapX + 1.0 - camara.xPos)*deltaX;
-            }
-            if(raycastDir_Y<0){
-                pasoY= -1;
-                distY = (camara.yPos - mapY)*deltaY;
-            } else{
-                pasoY = 1;
-                distY = (mapY + 1.0 - camara.yPos)*deltaY;
-            }
-            
-            //chequeamos si el raycast choca con una pared..
-            while(!golpe){
-                if(distX<distY){
-                    distX += deltaX;
-                    mapX += pasoX;
-                    lado = 0;
-                }else{
-                    distY = deltaY;
-                    mapY += pasoY;
-                    lado = 1;
-                }
-                //chequeamos si le pega a una pared..
-                if(mapa[mapX][mapY]>0){
-                    golpe = true;
-                }
-            }
-            //distancia en JUGADOR-impacto..
-            if(lado==0){
-                lengthWall = Math.abs((mapX - camara.xPos + (1 - pasoX) /2 ) / raycastDir_X);
-                
-            } else{
-                lengthWall = Math.abs((mapY - camara.yPos + (1 - pasoY) /2 ) / raycastDir_Y);
-            }
-            
-            //algoritmo de raycast calcula altura en base a distancia frente a pared..
-            int alturaP;
-            if (lengthWall >0){
-                alturaP =  Math.abs((int)(alto / lengthWall));
-             
-            } else{
-                alturaP = alto;
-            }
-            
-            int start = -alturaP/2 + alto/2;
-            if(start<0){
-                start = 0;
-            }
-            int end = alturaP/2 + alto/2;
-            if(end>=alto){
-                end = alto -1;
-            }
-            
-            int textId = mapa[mapX][mapY] - 1;
-            double paredHitX;
-    
-            if (lado==1){
-                paredHitX = (camara.xPos + ((mapY - camara.yPos + (1 - pasoY) / 2 ) / raycastDir_Y) * raycastDir_X);
-            } else{
-                paredHitX = (camara.yPos + ((mapX - camara.xPos + (1 - pasoX) / 2 ) / raycastDir_X) * raycastDir_Y);
-                
-            }
-            paredHitX -= Math.floor(paredHitX);
-            //coordenadas de textura..
-            int texturaX = (int)(paredHitX * (texturas.get(textId).SIZE));
-            
-            if (lado == 0 && raycastDir_X > 0){
-                texturaX = texturas.get(0).SIZE - texturaX - 1;
-            }
-            
-            if (lado == 1 && raycastDir_Y < 0){
-                texturaX = texturas.get(0).SIZE - texturaX - 1;
-            }
-            
-            for (int y=start; y<end; ++y){
-                //shift binario.. 
-                int texturaY = (((y*2 - alto + alturaP)<<6)/alturaP)/2;
-                int color;
-                
-                if (lado == 0){
-                    color = texturas.get(0).pixels[texturaX + (texturaY * texturas.get(0).SIZE)];
-                } else{
-                    //autor dice que esto es sombreado, ni idea..
-                    color = (texturas.get(0).pixels[texturaX + (texturaY * texturas.get(0).SIZE)]>>1) & 8355711;
-                }
-                pixeles[x + y *(ancho)] = color;
-            }
-        }
-        return pixeles;
-    }
+	public int[][] map;
+	public int mapWidth, mapHeight, width, height;
+	public ArrayList<TextureManager> textures;
+	
+	public RendererManager(int[][] m, int mapW, int mapH, ArrayList<TextureManager> tex, int w, int h) {
+		map = m;
+		mapWidth = mapW;
+		mapHeight = mapH;
+		textures = tex;
+		width = w;
+		height = h;
+	}
+	
+	public int[] update(Camara camera, int[] pixels) {
+		for(int n=0; n<pixels.length/2; n++) {
+			if(pixels[n] != Color.DARK_GRAY.getRGB()) pixels[n] = Color.DARK_GRAY.getRGB();
+		}
+		for(int i=pixels.length/2; i<pixels.length; i++){
+			if(pixels[i] != Color.gray.getRGB()) pixels[i] = Color.gray.getRGB();
+		}
+	    
+	    for(int x=0; x<width; x=x+1) {
+                    double cameraX = 2 * x / (double)(width) -1;
+		    double rayDirX = camera.xAxis + camera.xPlano * cameraX;
+		    double rayDirY = camera.yAxis + camera.yPlano * cameraX;
+		    //Map position
+		    int mapX = (int)camera.xPos;
+		    int mapY = (int)camera.yPos;
+		    //length of ray from current position to next x or y-side
+		    double sideDistX;
+		    double sideDistY;
+		    //Length of ray from one side to next in map
+		    double deltaDistX = Math.sqrt(1 + (rayDirY*rayDirY) / (rayDirX*rayDirX));
+		    double deltaDistY = Math.sqrt(1 + (rayDirX*rayDirX) / (rayDirY*rayDirY));
+		    double perpWallDist;
+		    //Direction to go in x and y
+		    int stepX, stepY;
+		    boolean hit = false;//was a wall hit
+		    int side=0;//was the wall vertical or horizontal
+		    //Figure out the step direction and initial distance to a side
+		    if (rayDirX < 0)
+		    {
+		    	stepX = -1;
+		    	sideDistX = (camera.xPos - mapX) * deltaDistX;
+		    }
+		    else
+		    {
+		    	stepX = 1;
+		    	sideDistX = (mapX + 1.0 - camera.xPos) * deltaDistX;
+		    }
+		    if (rayDirY < 0)
+		    {
+		    	stepY = -1;
+		        sideDistY = (camera.yPos - mapY) * deltaDistY;
+		    }
+		    else
+		    {
+		    	stepY = 1;
+		        sideDistY = (mapY + 1.0 - camera.yPos) * deltaDistY;
+		    }
+		    //Loop to find where the ray hits a wall
+		    while(!hit) {
+		    	//Jump to next square
+		    	if (sideDistX < sideDistY)
+		        {
+		    		sideDistX += deltaDistX;
+		    		mapX += stepX;
+		    		side = 0;
+		        }
+		        else
+		        {
+		        	sideDistY += deltaDistY;
+		        	mapY += stepY;
+		        	side = 1;
+		        }
+		    	
+		    	//System.out.println(mapX + ", " + mapY + ", " + map[mapX][mapY]);
+                        
+		    	if(map[mapX][mapY] > 0) hit = true;
+		    }
+		    //Calculo de distancia entre golpes
+		    if(side==0)
+		    	perpWallDist = Math.abs((mapX - camera.xPos + (1 - stepX) / 2) / rayDirX);
+		    else
+		    	perpWallDist = Math.abs((mapY - camera.yPos + (1 - stepY) / 2) / rayDirY);	
+		    //calculo de altura de pared
+		    int lineHeight;
+		    if(perpWallDist > 0) lineHeight = Math.abs((int)(height / perpWallDist));
+		    else lineHeight = height;
+		    
+		    int drawStart = -lineHeight/2+ height/2;
+		    if(drawStart < 0)
+		    	drawStart = 0;
+		    int drawEnd = lineHeight/2 + height/2;
+		    if(drawEnd >= height) 
+		    	drawEnd = height - 1;
+		    //add a texture
+		    int texNum = map[mapX][mapY] - 1;
+		    double wallX;//donde golpeo el ray
+		    if(side==1) {
+		    	wallX = (camera.xPos + ((mapY - camera.yPos + (1 - stepY) / 2) / rayDirY) * rayDirX);
+		    } else {
+		    	wallX = (camera.yPos + ((mapX - camera.xPos + (1 - stepX) / 2) / rayDirX) * rayDirY);
+		    }
+		    wallX-=Math.floor(wallX);
+		    //coord
+		    int texX = (int)(wallX * (textures.get(texNum).SIZE));
+		    if(side == 0 && rayDirX > 0) texX = textures.get(texNum).SIZE - texX - 1;
+		    if(side == 1 && rayDirY < 0) texX = textures.get(texNum).SIZE - texX - 1;
+		    //coord
+		    for(int y=drawStart; y<drawEnd; y++) {
+		    	int texY = (((y*2 - height + lineHeight) << 6) / lineHeight) / 2;
+		    	int color;
+		    	if(side==0) color = textures.get(texNum).pixels[texX + (texY * textures.get(texNum).SIZE)];
+		    	else color = (textures.get(texNum).pixels[texX + (texY * textures.get(texNum).SIZE)]>>1) & 8355711;//truco de shader.. segun autor..
+		    	pixels[x + y*(width)] = color;
+		    }
+		}
+		return pixels;
+	}
 }
